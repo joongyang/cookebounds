@@ -1,12 +1,12 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "cookebounds"
 version = "0.1.0"
 authors = [
-    { name="joongyang" }
+    { name="JoongYang Park" }
 ]
 description = "Non-parametric threshold estimation using Extreme Value Theory and weight-calibrated Jackknife procedures."
 readme = "README.md"
@@ -25,3 +25,7 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/yourusername/cookebounds"
 "Bug Tracker" = "https://github.com/yourusername/cookebounds/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
