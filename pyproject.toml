@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "cookebounds"
 version = "0.1.0"
 authors = [
-    { name="joongyang" }
+    { name="Joongyang Park" }
 ]
 description = "Non-parametric threshold estimation using Extreme Value Theory and weight-calibrated Jackknife procedures."
 readme = "README.md"
