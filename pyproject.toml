@@ -27,5 +27,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/joongyang/cookebounds/issues"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["cookebounds*"]
+exclude = ["tests*"]
 
