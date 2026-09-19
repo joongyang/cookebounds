@@ -23,8 +23,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/yourusername/cookebounds"
-"Bug Tracker" = "https://github.com/yourusername/cookebounds/issues"
+"Homepage" = "https://github.com/joongyang/cookebounds"
+"Bug Tracker" = "https://github.com/joongyang/cookebounds/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
