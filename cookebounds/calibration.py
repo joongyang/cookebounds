@@ -78,12 +78,19 @@ class CookeEngine:
         cumsum_w = np.cumsum(w_u)
         
         valid_k = np.where(cumsum_w <= target_weight)[0]
+        
+        # Bounded dynamic adjustment
         if len(valid_k) == 0 or (valid_k[-1] + 1) < (self.k_min + self.window_size):
             warnings.warn("Tail depth is too shallow for the window size. Adjusting K_max dynamically.")
-            K_max = self.k_min + self.window_size + 5
+            K_max = min(self.k_min + self.window_size + 5, len(u))
         else:
-            K_max = valid_k[-1] + 1 
-
+            K_max = min(valid_k[-1] + 1, len(u))
+            
+        # Failsafe: Ensure we still have enough points to form at least one window
+        if K_max < self.k_min + self.window_size - 1:
+            raise SampleTooSmallError(
+                f"Not enough unique support points ({len(u)}) to form a rolling window."
+            )
         # Algorithm 2: Jackknife Estimation over unique support points[cite: 1]
         k_range = np.arange(self.k_min, K_max + 1)
         jackknife_vals = np.zeros(len(k_range))
@@ -107,3 +114,4 @@ class CookeEngine:
         k_star_idx = np.where(k_range == k_star)[0][0]
         
         return float(jackknife_vals[k_star_idx]), k_star
+
