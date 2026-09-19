@@ -13,3 +13,28 @@ It implements the base spacing-estimator developed by Cooke (1979) alongside a n
 ## Installation
 ```bash
 pip install cookebounds
+```
+
+# Quick Start
+
+```python
+import numpy as np
+from cookebounds import ThresholdEstimator
+
+# Generate empirical data with a strict minimum threshold of 0.5
+y = np.random.weibull(a=1.5, size=1000) * 10 + 0.5
+weights = np.random.randint(1, 10, size=1000)
+
+estimator = ThresholdEstimator(k_min=20, window_size=5, tail_depth=0.05)
+
+# Calculate weight-calibrated bounds
+results = estimator.fit(y, weights=weights, method='weight_calibrated', direction='min')
+
+print(f"Estimated Minimum Threshold: {results['min_threshold']:.4f}")
+print(f"Optimal Truncation (k*): {results['min_k_used']}")
+```
+
+# References
+
+Cooke, P. (1979). Statistical inference for bounds of random variables. Biometrika, 66(2), 367-374.
+
