@@ -16,7 +16,7 @@ class CookeEngine:
 
     def _minimax_weights(self, k: int) -> np.ndarray:
         """
-        Calculates minimax weights for Cooke's base estimator[cite: 1].
+        Calculates minimax weights for Cooke's base estimator.
         """
         if k < 2:
             raise ValueError("k must be at least 2 to compute spacings.")
@@ -26,7 +26,7 @@ class CookeEngine:
     def basic_cooke(self, y: np.ndarray, k: int) -> float:
         """
         Calculates the base Cooke (1979) estimator using the spacing between 
-        the lowest extreme order statistics[cite: 1].
+        the lowest extreme order statistics.
         """
         y_sorted = np.sort(y)
         if len(y_sorted) < k:
@@ -36,13 +36,13 @@ class CookeEngine:
         diffs = np.diff(y_k)
         xi = self._minimax_weights(k)
         
-        # Base estimator formula subtracting weighted spacings from the minimum[cite: 1]
+        # Base estimator formula subtracting weighted spacings from the minimum
         return float(y_k[0] - np.sum(xi * diffs))
 
     def jackknife_cooke(self, y: np.ndarray, k: int) -> float:
         """
         Calculates the Jackknife estimator to reduce location bias by iteratively 
-        omitting clusters of extreme order statistics[cite: 1].
+        omitting clusters of extreme order statistics.
         """
         y_sorted = np.sort(y)
         if len(y_sorted) < k:
@@ -53,11 +53,11 @@ class CookeEngine:
         
         leave_one_out_ests = np.zeros(k)
         for m in range(k):
-            # Form subset by omitting the m-th order statistic[cite: 1]
+            # Form subset by omitting the m-th order statistic
             y_omitted = np.delete(y_k, m)
             leave_one_out_ests[m] = self.basic_cooke(y_omitted, k - 1)
             
-        # Jackknife adjustment formula[cite: 1]
+        # Jackknife adjustment formula
         return float(k * base_est - ((k - 1) / k) * np.sum(leave_one_out_ests))
 
     def weight_calibrated_min(self, y: np.ndarray, weights: np.ndarray) -> Tuple[float, int]:
@@ -69,7 +69,7 @@ class CookeEngine:
         y_sorted = y[sort_idx]
         w_sorted = weights[sort_idx]
         
-        # Algorithm 1: Weight Calibration - identify unique support points[cite: 1]
+        # Algorithm 1: Weight Calibration - identify unique support points
         u, unique_indices = np.unique(y_sorted, return_inverse=True)
         w_u = np.bincount(unique_indices, weights=w_sorted)
         
@@ -91,14 +91,14 @@ class CookeEngine:
             raise SampleTooSmallError(
                 f"Not enough unique support points ({len(u)}) to form a rolling window."
             )
-        # Algorithm 2: Jackknife Estimation over unique support points[cite: 1]
+        # Algorithm 2: Jackknife Estimation over unique support points
         k_range = np.arange(self.k_min, K_max + 1)
         jackknife_vals = np.zeros(len(k_range))
         
         for idx, k in enumerate(k_range):
             jackknife_vals[idx] = self.jackknife_cooke(u, k)
             
-        # Algorithm 3: Empirical Plateau Detection via rolling variance[cite: 1]
+        # Algorithm 3: Empirical Plateau Detection via rolling variance
         variances = []
         n_windows = len(k_range) - self.window_size + 1
         
@@ -109,7 +109,7 @@ class CookeEngine:
         opt_idx = int(np.argmin(variances))
         optimal_window_k = k_range[opt_idx : opt_idx + self.window_size]
         
-        # Optimal k* is the median of the lowest-variance window[cite: 1]
+        # Optimal k* is the median of the lowest-variance window
         k_star = int(np.median(optimal_window_k))
         k_star_idx = np.where(k_range == k_star)[0][0]
         
